@@ -78,7 +78,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     
     if (this.activeTab === 'login') {
       this.authService.login(formValue.email, formValue.password).subscribe({
-        next: () => this.router.navigate(['/dashboard']),
+        next: () => this.router.navigate(['/home']),
         error: (err) => this.errorMessage = err.message
       });
     } else {

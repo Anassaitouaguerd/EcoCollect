@@ -10,6 +10,8 @@ import { Store } from '@ngrx/store';
 import { NewRequestModalComponent } from './components/new-request-modal/new-request-modal.component';
 import { selectAllRequests } from './store/request.selectors';
 import { Request } from '../../interfaces/request.interface';
+import { loadRequests } from './store/request.actions';
+import { ifError } from 'assert';
 
 @Component({
   selector: 'app-home',
@@ -25,6 +27,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   private animationFrameId: number = 0;
   private isBrowser: boolean;
   allRequests$: Observable<Request[]>;
+  public countRequestPanding: number = 0;
 
   constructor(
     private router: Router,
@@ -39,8 +42,23 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     if (this.isBrowser) {
       this.initParticles();
-      this.animate();
+      this.animate(); 
     }
+  }
+
+  ngOnInit() {
+    this.store.dispatch(loadRequests());
+    if(this.allRequests$){
+      this.allRequests$.subscribe(requests => {
+        requests.forEach(request => {
+          if(request.status == 'pending' && request.user_email == this.getUserEmail()){
+            this.countRequestPanding = this.countRequestPanding + 1 ;          
+     
+          }
+        });
+      });
+    }
+    
   }
 
   ngOnDestroy() {
@@ -92,6 +110,10 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
   logout() {
     this.router.navigate(['/login']);
+  }
+
+  getUserEmail(): string{
+    return localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!).email : '';
   }
 }
 

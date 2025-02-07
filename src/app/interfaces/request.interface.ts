@@ -5,6 +5,7 @@ export interface Request {
     date: string;
     status: 'pending' | 'busy' | 'in progress' | 'validated' | 'rejected';
     timeSlot: string;
+    user_email: string;
   }
   
   export interface DashboardState { 

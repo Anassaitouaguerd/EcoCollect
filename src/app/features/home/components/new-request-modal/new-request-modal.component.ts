@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { addRequest, addRequestSuccess } from '../../store/request.actions';
 import { selectAllRequests } from '../../store/request.selectors';
 import { tap } from 'rxjs';
+import { RequestService } from '../../../../services/request.service';
 
 @Component({
   selector: 'app-new-request-modal',
@@ -21,7 +22,8 @@ export class NewRequestModalComponent {
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
-    private store: Store
+    private store: Store,
+    private requestService: RequestService
   ) {
     this.requestForm = this.fb.group({
       type: ['', Validators.required],
@@ -45,10 +47,12 @@ export class NewRequestModalComponent {
       const newRequest = {
         ...this.requestForm.value,
         id: this.generateUniqueId(),
-        status: 'en attente'
+        status: 'pending',
+        user_email: this.getUserEmail()
       };
-      this.store.dispatch(addRequestSuccess({request: newRequest}))
 
+      this.store.dispatch(addRequest({request: newRequest}));
+  
       setTimeout(() => {
         this.store.select(selectAllRequests)
           .pipe(tap(requests => console.log('Current requests in store:', requests)))
@@ -60,5 +64,9 @@ export class NewRequestModalComponent {
 
   generateUniqueId(): string {
     return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 11);
+  }
+
+  getUserEmail(): string{
+    return localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!).email : '';
   }
 }

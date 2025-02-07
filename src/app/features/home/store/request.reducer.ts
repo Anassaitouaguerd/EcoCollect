@@ -38,8 +38,11 @@ export const requestReducer = createReducer(
     loading: true
   })),
   
-  on(RequestActions.loadRequestsSuccess, (state, { requests }) =>
-    adapter.setAll(requests, { ...state, loading: false })
+  on(RequestActions.loadRequestsSuccess, (state, { requests }) =>{
+    console.log('Reducer received requests:', requests);
+      return adapter.setAll(requests, { ...state, loading: false })
+  }
+
   ),
   
   on(RequestActions.loadRequestsFailure, (state, { error }) => ({
