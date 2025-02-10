@@ -32,6 +32,36 @@ export const requestReducer = createReducer(
     error,
     loading: false  
   })),
+ 
+  on(RequestActions.updateRequest, (state) => ({
+    ...state,
+    loading: true
+  })),
+  
+  on(RequestActions.updateRequestSuccess, (state, { request }) => 
+    adapter.updateOne({ id: request.id, changes: request }, { ...state, loading: false })
+  ),
+  
+  on(RequestActions.updateRequestFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false  
+  })),
+ 
+  on(RequestActions.deleteRequest, (state) => ({
+    ...state,
+    loading: true
+  })),
+  
+  on(RequestActions.deleteRequestSuccess, (state, { id }) => 
+    adapter.removeOne(id as string, { ...state, loading: false })
+  ),
+  
+  on(RequestActions.deleteRequestFailure, (state, { error }) => ({
+    ...state,
+    error,
+    loading: false
+  })),
   
   on(RequestActions.loadRequests, (state) => ({
     ...state,

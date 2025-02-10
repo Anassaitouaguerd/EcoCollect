@@ -19,7 +19,7 @@
         <div class="col-md-6 col-12">
           <div class="glass-card stat-card">
             <h5><i class="fas fa-coins me-2"></i>Your Points</h5>
-            <h1 class="display-4">1,250</h1>
+            <h1 class="display-4">{{pointsUser}}</h1>
           </div>
         </div>
         <div class="col-md-6 col-12">
@@ -28,8 +28,25 @@
             <h1 class="display-4">3</h1>
           </div>
         </div>
+              <!-- Add after Points card -->
+        <div class="col-md-6 col-12">
+            <div class="glass-card stat-card">
+                <h5><i class="fas fa-gift me-2"></i>Convert Points</h5>
+                <div class="btn-group-vertical w-100">
+                    <button class="btn btn-success mb-2" (click)="convertPoints(100)">
+                        100 pts = 50DH
+                    </button>
+                    <button class="btn btn-warning mb-2" (click)="convertPoints(200)">
+                        200 pts = 120DH
+                    </button>
+                    <button class="btn btn-danger" (click)="convertPoints(500)">
+                        500 pts = 350DH
+                    </button>
+                </div>
+            </div>
+        </div>
       </div>
-      
+
   
       <!-- Requests Section -->
       <div class="glass-card p-3 mb-4" style="width: 80%;
@@ -49,6 +66,12 @@
               <small>{{request.date}} • {{request.status}}</small>
             </div>
             <span class="badge">{{request.status}}</span>
+            <button id="{{request.id}}" (click)="showUpdateRequestModal(request.id , request.status)">
+                Update
+            </button>
+            <button id="{{request.id}}" (click)="showDeleteRequestModal(request.id)">
+                Delete
+            </button>
           </div>
         </div>
       </div>

@@ -11,7 +11,8 @@ import { NewRequestModalComponent } from './components/new-request-modal/new-req
 import { selectAllRequests } from './store/request.selectors';
 import { Request } from '../../interfaces/request.interface';
 import { loadRequests } from './store/request.actions';
-import { ifError } from 'assert';
+import { UpdateRequestModalComponent } from './components/update-request-modal/update-request-modal.component';
+import { DeleteRequestModaleComponent } from './components/delete-request-modale/delete-request-modale.component';
 
 @Component({
   selector: 'app-home',
@@ -28,6 +29,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   private isBrowser: boolean;
   allRequests$: Observable<Request[]>;
   public countRequestPanding: number = 0;
+  public pointsUser: number = 0 ;
 
   constructor(
     private router: Router,
@@ -52,6 +54,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       this.allRequests$.subscribe(requests => {
         requests.forEach(request => {
           if(request.status == 'pending' && request.user_email == this.getUserEmail()){
+      
             this.countRequestPanding = this.countRequestPanding + 1 ;          
      
           }
@@ -59,6 +62,10 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       });
     }
     
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      this.pointsUser = JSON.parse(currentUser).points;
+    }
   }
 
   ngOnDestroy() {
@@ -107,13 +114,84 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       }
     );
   }
+  
+  showUpdateRequestModal(requestId: string ,requestStatus: string ) {
+    const modalRef = this.modalService.open(UpdateRequestModalComponent, {
+      centered: true,
+      backdrop: 'static',
+      keyboard: false
+    });
+    
+    modalRef.componentInstance.requestId = requestId;
+    modalRef.componentInstance.requestStatus = requestStatus;
+    
+    modalRef.result.then(
+      (result) => {
+        if (result) {
+          
+          console.log('New Request:', result);
+        }
+      },
+      (reason) => {
+        console.log('Modal dismissed with reason:', reason);
+      }
+    );
+  }
+
+  showDeleteRequestModal(requestId: string ) {
+    const modalRef = this.modalService.open(DeleteRequestModaleComponent, {
+      centered: true,
+      backdrop: 'static',
+      keyboard: false
+    });
+    
+    modalRef.componentInstance.requestId = requestId;
+    
+    
+    modalRef.result.then(
+      (result) => {
+        if (result) {
+          
+          console.log('New Request:', result);
+        }
+      },
+      (reason) => {
+        console.log('Modal dismissed with reason:', reason); // Add this line for debugging
+      }
+    );
+  }
 
   logout() {
+    localStorage.getItem('currentUser') ? localStorage.removeItem('currentUser') : "";
     this.router.navigate(['/login']);
   }
 
   getUserEmail(): string{
     return localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')!).email : '';
+  }
+  
+  public convertPoints(option: 100 | 200 | 500): void {
+    const conversionRates = {
+      100: 50,
+      200: 120,
+      500: 350
+    };
+    if (this.pointsUser >= option) {
+      console.log(`Converted ${option} points to ${conversionRates[option]}Dh voucher`);
+
+      this.pointsUser = this.pointsUser - option;
+
+      const currentUser = localStorage.getItem('currentUser');
+
+      if (currentUser) {
+        JSON.parse(currentUser).points = this.pointsUser;
+      }
+
+      alert(`Voucher de ${conversionRates[option]}Dh généré !`);
+      
+    } else {
+      alert('Points insuffisants !');
+    }
   }
 }
 

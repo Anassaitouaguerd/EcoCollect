@@ -1,0 +1,88 @@
+<div class="home-container">
+  <canvas #particleCanvas class="particles"></canvas>
+  
+  <div class="container py-4">
+    <!-- Header -->
+    <div class="glass-card header d-flex justify-content-between align-items-center mb-4">
+      <h1 class="m-0">♻️ RecycleHub Collector</h1>
+      <div class="d-flex align-items-center">
+        <div class="user-badge me-3">
+          <i class="fas fa-user-shield me-2"></i>{{getCollectorName()}}
+        </div>
+        <button class="btn btn-primary" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-row">
+      <div class="glass-card stat-card">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h5><i class="fas fa-clock me-2"></i>Pending Requests</h5>
+            <h1 class="display-4">{{pendingRequestsCount}}</h1>
+          </div>
+          <div class="stat-icon">
+            <i class="fas fa-hourglass-half"></i>
+          </div>
+        </div>
+      </div>
+      
+      <div class="glass-card stat-card">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h5><i class="fas fa-check-circle me-2"></i>Processed</h5>
+            <h1 class="display-4">{{processedRequestsCount}}</h1>
+          </div>
+          <div class="stat-icon">
+            <i class="fas fa-clipboard-check"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Requests Table -->
+    <div class="glass-card requests-container">
+      <div class="header-row">
+        <h4><i class="fas fa-tasks me-2"></i>Pending Requests</h4>
+        <div class="sort-filter">
+          <button class="btn btn-sm">
+            <i class="fas fa-sort-amount-down me-2"></i>Sort
+          </button>
+        </div>
+      </div>
+
+      <div class="requests-list">
+        <div *ngFor="let request of pendingRequests" class="request-item">
+          <div class="request-content">
+            <div class="request-meta">
+              <div class="request-type">{{request.type}}</div>
+              <div class="request-user">
+                <i class="fas fa-user-circle me-2"></i>{{request.user_email}}
+              </div>
+            </div>
+            <div class="request-details">
+              <div class="detail">
+                <i class="fas fa-weight-hanging me-2"></i>
+                {{request.weight}}g
+              </div>
+              <div class="detail">
+                <i class="far fa-calendar-alt me-2"></i>
+                {{request.date | date}}
+              </div>
+            </div>
+          </div>
+          <div class="request-actions">
+            <button class="btn-accept" (click)="onApproveRequest(request.id)">
+              <i class="fas fa-check-circle me-2"></i>Accept
+            </button>
+            <button class="btn-reject" (click)="onRejectRequest(request.id)">
+              <i class="fas fa-times-circle me-2"></i>Reject
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Request } from '../../../../interfaces/request.interface';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { addRequest, addRequestSuccess } from '../../store/request.actions';
-import { selectAllRequests } from '../../store/request.selectors';
-import { tap } from 'rxjs';
+import { addRequest } from '../../store/request.actions';
+
 import { RequestService } from '../../../../services/request.service';
 
 @Component({
@@ -22,8 +20,7 @@ export class NewRequestModalComponent {
   constructor(
     public activeModal: NgbActiveModal,
     private fb: FormBuilder,
-    private store: Store,
-    private requestService: RequestService
+    private store: Store
   ) {
     this.requestForm = this.fb.group({
       type: ['', Validators.required],
@@ -36,7 +33,6 @@ export class NewRequestModalComponent {
   onSubmit(event: Event) {
     event.preventDefault();
     
-    // Mark all fields as touched to trigger validation messages
     Object.keys(this.requestForm.controls).forEach(key => {
       const control = this.requestForm.get(key);
       control?.markAsTouched();
@@ -52,12 +48,7 @@ export class NewRequestModalComponent {
       };
 
       this.store.dispatch(addRequest({request: newRequest}));
-  
-      setTimeout(() => {
-        this.store.select(selectAllRequests)
-          .pipe(tap(requests => console.log('Current requests in store:', requests)))
-          .subscribe();
-      }, 100);
+
       this.activeModal.close(newRequest);
     }
   }
